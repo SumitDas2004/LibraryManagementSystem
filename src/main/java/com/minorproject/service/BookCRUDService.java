@@ -56,7 +56,7 @@ public class BookCRUDService {
        return book;
     }
 
-    @Cacheable(value="LibraryManagement_Book_NameAndAuthor", key="{#name, #authorName}", unless="#result==null")
+    @Cacheable(value="LibraryManagement_Book_NameAndAuthor", key="{(#name).toLowerCase()+'::'+(#authorName).toLowerCase}", unless="#result==null")
     public Book getBookUsingNameAndAuthor(String name, String authorName) throws Exception {
         Author auth = authorCRUDService.getByName(String.join(" ", authorName.split("_")));
 
@@ -167,8 +167,8 @@ public class BookCRUDService {
 
     public void updateBook(Book book)throws Exception{
         cache.getCache("LibraryManagement_Book_Id").put(book.getId(), book);
-        cache.getCache("LibraryManagement_Book_ISBN").put(book.getISBN(), book);
-        cache.getCache("LibraryManagement_Book_NameAndAuthor").put(book.getId()+" "+book.getAuthor().getName(), book);
+        cache.getCache("LibraryManagement_Book_ISBN").put(book.getISBN().toLowerCase(), book);
+        cache.getCache("LibraryManagement_Book_NameAndAuthor").put(book.getId()+"::"+book.getAuthor().getName().toLowerCase(), book);
 
         bookRepo.save(book);
     }
@@ -221,7 +221,7 @@ public class BookCRUDService {
     public void deleteBook(Book book)throws Exception{
         cache.getCache("LibraryManagement_Book_Id").evict(book.getId());
         cache.getCache("LibraryManagement_Book_ISBN").evict(book.getISBN());
-        cache.getCache("LibraryManagement_Book_NameAndAuthor").evict(book.getId()+" "+book.getAuthor().getName());
+        cache.getCache("LibraryManagement_Book_NameAndAuthor").evict(book.getId()+"::"+book.getAuthor().getName().toLowerCase());
 
         bookRepo.delete(book);
     }

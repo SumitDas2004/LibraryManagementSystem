@@ -72,7 +72,7 @@ public class StudentCRUDService {
 	public void deleteStudent(Student stud) throws Exception{
 		cache.getCache("LibraryManagement_Student_PhoneNumber").evict(stud.getPhoneNumber());
 		cache.getCache("LibraryManagement_Student_Id").evict(stud.getId());
-		cache.getCache("LibraryManagement_Student_Email").evict(stud.getEmail());
+		cache.getCache("LibraryManagement_Student_Email").evict(stud.getEmail().toLowerCase());
 
 		repo.delete(stud);
 	}
@@ -143,7 +143,7 @@ public class StudentCRUDService {
 
 		cache.getCache("LibraryManagement_Student_PhoneNumber").put(stud.getPhoneNumber(), stud);
 		cache.getCache("LibraryManagement_Student_Id").put(stud.getId(), stud);
-		cache.getCache("LibraryManagement_Student_Email").put(stud.getEmail(), stud);
+		cache.getCache("LibraryManagement_Student_Email").put(stud.getEmail().toLowerCase(), stud);
 
 		repo.save(stud);
 	}
@@ -155,7 +155,7 @@ public class StudentCRUDService {
 		return s;
 	}
 
-	@Cacheable(value="LibraryManagement_Student_Email", key="#email", unless="#result==null")
+	@Cacheable(value="LibraryManagement_Student_Email", key="(#email).toLowerCase()", unless="#result==null")
 	public Student readStudentUsingEmail(String email) throws Exception {
 		Student s = repo.getByEmail(email);
 

@@ -109,8 +109,8 @@ public class AuthorCRUDService {
 	public void updateAuthor(Author auth) throws Exception{
 		
 		cache.getCache("LibraryManagement_Author_Id").put(auth.getId(), auth);
-		cache.getCache("LibraryManagement_Author_Email").put(auth.getEmail(), auth);
-		cache.getCache("LibraryManagement_Author_Name").put(auth.getName(), auth);
+		cache.getCache("LibraryManagement_Author_Email").put(auth.getEmail().toLowerCase(), auth);
+		cache.getCache("LibraryManagement_Author_Name").put(auth.getName().toLowerCase(), auth);
 
 		repo.save(auth);
 	}
@@ -137,8 +137,8 @@ public class AuthorCRUDService {
 
 	public void deleteAuthor(Author auth)throws Exception{
 		cache.getCache("LibraryManagement_Author_Id").evict(auth.getId());
-		cache.getCache("LibraryManagement_Author_Email").evict(auth.getEmail());
-		cache.getCache("LibraryManagement_Author_Name").evict(auth.getName());
+		cache.getCache("LibraryManagement_Author_Email").evict(auth.getEmail().toLowerCase());
+		cache.getCache("LibraryManagement_Author_Name").evict(auth.getName().toLowerCase());
 
 		repo.delete(auth);
 
